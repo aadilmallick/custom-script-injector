@@ -11,4 +11,6 @@ import {
   startsWith as vStartsWith,
 } from "valibot";
 
-export const httpsSchema = vPipe(vString(), vUrl(), vStartsWith("https://"));
+// export const httpsSchema = vObject({
+//   url: vUrl(),
+// });

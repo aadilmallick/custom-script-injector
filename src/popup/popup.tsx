@@ -1,16 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import "../index.css";
 import "./popup.css";
+import AddScript from "./AddScript";
+import ScriptList from "./ScriptList";
+import { UserScripts } from "../chrome-api/userScripts";
+import { toaster } from "./Toaster";
+
+toaster.setup();
 
 const App: React.FC<{}> = () => {
+  const [userScriptsAvailable, setUserScriptsAvailable] = React.useState(false);
+
+  useEffect(() => {
+    const userScriptsAvailable = UserScripts.isUserScriptsAvailable();
+    setUserScriptsAvailable(userScriptsAvailable);
+  }, []);
+
+  if (!userScriptsAvailable) {
+    return (
+      <section>
+        <h1 className="text-black text-lg text-center">User Scripts</h1>
+        <p className="text-black text-center">
+          User scripts are not available in this browser
+        </p>
+        <p className="text-black text-center">
+          You must enable developer mode first
+        </p>
+      </section>
+    );
+  }
+
   return (
-    <div>
-      <p className="text-white text-2xl underline font-black">Hello world</p>
-      {/* this is how you refer to assets: they live in the static folder, and you refer to them
-      absolutely. */}
-      <img src="icon.png" />
-    </div>
+    <section>
+      <h1 className="text-black text-lg text-center">User Scripts</h1>
+      <AddScript />
+      <ScriptList />
+    </section>
   );
 };
 

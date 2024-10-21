@@ -1,6 +1,6 @@
 {
-  "name": "React Extension",
-  "description": "Chrome Extension in React!",
+  "name": "Custom Script Injector",
+  "description": "Extension to inject scripts into whatever web page",
   "version": "1.0.0",
   "manifest_version": 3,
   "icons": {
@@ -13,16 +13,11 @@
     "default_title": "React Extension",
     "default_icon": "icon.png"
   },
-  "permissions": ["storage"],
+  "permissions": ["storage", "userScripts", "unlimitedStorage"],
+  "optional_host_permissions": ["<all_urls>"],
   "options_page": "options.html",
   "background": {
     "service_worker": "background.js",
     "type": "module"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["contentScript.js"]
-    }
-  ]
+  }
 }

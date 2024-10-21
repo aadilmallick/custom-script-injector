@@ -19,10 +19,6 @@ export function useObjectState<T extends Record<string, any>>(initialState: T) {
     setState((prevState) => ({ ...prevState, ...newState }));
   }, []);
 
-  const getValue = React.useCallback(function (key: keyof T) {
-    return state[key];
-  }, []);
-
   const setValue = React.useCallback(function (
     key: keyof T,
     value: T[keyof T]
@@ -31,7 +27,7 @@ export function useObjectState<T extends Record<string, any>>(initialState: T) {
   },
   []);
 
-  return { state, setPartialState, getValue, setValue };
+  return { state, setPartialState, setValue };
 }
 
 export function useGetCurrentTab() {

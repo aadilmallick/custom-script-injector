@@ -3,6 +3,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useObjectState } from "../utils/ReactUtils";
 import useScriptStorage from "./useScriptStorage";
+import PrismCodeEditor, { usePrismEditorRef } from "./PrismCodeEditor";
+import { toaster } from "./Toaster";
 
 const AddScript = () => {
   const { state, setPartialState } = useObjectState({
@@ -10,6 +12,8 @@ const AddScript = () => {
   });
   const { addScript } = useScriptStorage();
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const editorRef = usePrismEditorRef();
+
   const [open, setOpen] = React.useState(false);
   const handleClose = () => {
     setOpen(false);
@@ -22,9 +26,11 @@ const AddScript = () => {
     e.preventDefault();
     handleClose();
 
-    const code = textareaRef.current?.value;
+    const code = editorRef.current?.value;
+    console.log("code", code);
 
     if (!state.url || !code) {
+      toaster.danger("URL and code are required");
       return;
     }
 
@@ -53,10 +59,10 @@ const AddScript = () => {
           className="w-[90%] mx-auto p-4 bg-white/95 rounded-md space-y-4"
           onSubmit={onSubmit}
         >
+          <label htmlFor="url" className="">
+            Enter url
+          </label>
           <div>
-            <label htmlFor="url" className="">
-              Enter url
-            </label>
             <input
               type="url"
               id="url"
@@ -68,11 +74,11 @@ const AddScript = () => {
               onChange={(e) => setPartialState({ url: e.target.value })}
             />
           </div>
-          <div>
-            <label htmlFor="code" className="text-for">
-              Type Code here
-            </label>
-            <textarea
+          <label htmlFor="code" className="text-for block">
+            Type Code here
+          </label>
+          <div className="overflow-y-auto max-h-96">
+            {/* <textarea
               id="code"
               rows={10}
               cols={30}
@@ -81,7 +87,8 @@ const AddScript = () => {
               minLength={1}
               maxLength={10000}
               ref={textareaRef}
-            />
+            /> */}
+            <PrismCodeEditor ref={editorRef} language="jsx" />
           </div>
           <button
             className="block w-full bg-blue-600 text-white font-semibold rounded-md py-2 px-4"

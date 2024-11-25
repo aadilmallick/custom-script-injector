@@ -2,6 +2,7 @@ import React from "react";
 import useScriptStorage from "./useScriptStorage";
 import { Script } from "../background/controllers/storage";
 import Backdrop from "@mui/material/Backdrop";
+import PrismCodeEditor, { usePrismEditorRef } from "./PrismCodeEditor";
 
 const ScriptList = () => {
   const { scripts, storageLoading } = useScriptStorage();
@@ -20,7 +21,7 @@ const ScriptList = () => {
 const ScriptRow = ({ script }: { script: Script }) => {
   const { removeScript, updateScript } = useScriptStorage();
   const [open, setOpen] = React.useState(false);
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const editorRef = usePrismEditorRef();
 
   const handleClose = () => {
     setOpen(false);
@@ -30,7 +31,8 @@ const ScriptRow = ({ script }: { script: Script }) => {
   };
 
   const onSave = async () => {
-    const code = textareaRef.current?.value;
+    const code = editorRef.current?.value;
+    console.log("saving code...", code);
     if (code === null || code === undefined) {
       return;
     }
@@ -61,7 +63,11 @@ const ScriptRow = ({ script }: { script: Script }) => {
         </button>
       </li>
       <Backdrop
-        sx={(theme) => ({ color: "black", zIndex: theme.zIndex.drawer + 1 })}
+        sx={(theme) => ({
+          color: "black",
+          zIndex: theme.zIndex.drawer + 1,
+          flexDirection: "column",
+        })}
         open={open}
       >
         <button
@@ -70,24 +76,19 @@ const ScriptRow = ({ script }: { script: Script }) => {
         >
           X
         </button>
-        <div className="w-[95%] h-4/5 mx-auto bg-white p-1">
-          <textarea
-            id="code"
-            rows={10}
-            cols={30}
-            className="border-2 border-gray-300 rounded-md w-full p-1 resize-none h-96 overflow-y-auto font-mono text-black"
-            minLength={1}
-            maxLength={10000}
-            ref={textareaRef}
-            defaultValue={script.code}
+        <div className="w-[95%] mx-auto bg-white p-1 overflow-y-auto max-h-96">
+          <PrismCodeEditor
+            ref={editorRef}
+            language="jsx"
+            defaultCode={script.code}
           />
-          <button
-            className="block w-full bg-blue-600 text-white font-semibold rounded-md py-2 px-4"
-            onClick={onSave}
-          >
-            Save
-          </button>
         </div>
+        <button
+          className="block w-[95%] mx-auto bg-blue-600 text-white font-semibold rounded-md py-2 px-4 mt-2"
+          onClick={onSave}
+        >
+          Save
+        </button>
       </Backdrop>
     </>
   );

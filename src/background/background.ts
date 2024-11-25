@@ -5,6 +5,7 @@ import { scriptsStorage } from "./controllers/storage";
 Runtime.onInstall({
   onAll: async () => {
     await scriptsStorage.setup();
+    console.log(await scriptsStorage.getAll());
   },
   updateCb: async () => {
     const scripts = await scriptsStorage.get("scripts");

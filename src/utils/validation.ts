@@ -9,8 +9,27 @@ import {
   pipe as vPipe,
   nonEmpty as vNonEmpty,
   startsWith as vStartsWith,
+  ObjectSchema,
+  ObjectEntries,
+  ErrorMessage,
+  ObjectIssue,
 } from "valibot";
 
-// export const httpsSchema = vObject({
-//   url: vUrl(),
-// });
+export class Validation {
+  static readonly httpsSchema = vObject({
+    url: vPipe(vString(), vStartsWith("https://")),
+  });
+  static validateThrow<
+    T extends ObjectEntries,
+    V extends ErrorMessage<ObjectIssue>
+  >(schema: ObjectSchema<T, V>, object: Record<string, any>) {
+    return vParse(schema, object);
+  }
+
+  static validateSafe<
+    T extends ObjectEntries,
+    V extends ErrorMessage<ObjectIssue>
+  >(schema: ObjectSchema<T, V>, object: Record<string, any>) {
+    return vSafeParse(schema, object);
+  }
+}

@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "jsx": "react",
-    "module": "es6",
-    "target": "es6",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "bundler",
     "esModuleInterop": true
   }
 }

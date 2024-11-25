@@ -2,7 +2,9 @@ import React from "react";
 import useScriptStorage from "./useScriptStorage";
 import { Script } from "../background/controllers/storage";
 import Backdrop from "@mui/material/Backdrop";
-import PrismCodeEditor, { usePrismEditorRef } from "./PrismCodeEditor";
+import { usePrismEditorRef } from "./PrismCodeEditor";
+
+const LazyLoadedPrismCodeEditor = React.lazy(() => import("./PrismCodeEditor"));
 
 const ScriptList = () => {
   const { scripts, storageLoading } = useScriptStorage();
@@ -77,7 +79,7 @@ const ScriptRow = ({ script }: { script: Script }) => {
           X
         </button>
         <div className="w-[95%] mx-auto bg-white p-1 overflow-y-auto max-h-96">
-          <PrismCodeEditor
+          <LazyLoadedPrismCodeEditor
             ref={editorRef}
             language="jsx"
             defaultCode={script.code}

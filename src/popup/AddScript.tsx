@@ -1,11 +1,12 @@
 import React, { FormEvent } from "react";
 import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
 import { useObjectState } from "../utils/ReactUtils";
 import useScriptStorage from "./useScriptStorage";
-import PrismCodeEditor, { usePrismEditorRef } from "./PrismCodeEditor";
+import { usePrismEditorRef } from "./PrismCodeEditor";
 import { toaster } from "./Toaster";
 import { URLMatcherModel } from "./URLMatcherModel";
+
+const LazyLoadedPrismCodeEditor = React.lazy(() => import("./PrismCodeEditor"));
 
 const AddScript = () => {
   const { state, setPartialState } = useObjectState({
@@ -116,7 +117,7 @@ const AddScript = () => {
               maxLength={10000}
               ref={textareaRef}
             /> */}
-            <PrismCodeEditor ref={editorRef} language="jsx" />
+            <LazyLoadedPrismCodeEditor ref={editorRef} language="jsx" />
           </div>
           <button
             className="block w-full bg-blue-600 text-white font-semibold rounded-md py-2 px-4"

@@ -5,9 +5,10 @@ import "./popup.css";
 import AddScript from "./AddScript";
 import ScriptList from "./ScriptList";
 import { UserScripts } from "../chrome-api/userScripts";
-import { toaster } from "./Toaster";
 
-toaster.setup();
+import("./Toaster").then((module) => {
+  module.toaster.setup();
+});
 
 const App: React.FC<{}> = () => {
   const [userScriptsAvailable, setUserScriptsAvailable] = React.useState(false);
@@ -26,6 +27,13 @@ const App: React.FC<{}> = () => {
         </p>
         <p className="text-black text-center">
           You must enable developer mode first
+          <a
+            href="chrome://extensions/"
+            target="_blank"
+            className="text-blue-500 cursor-pointer"
+          >
+            Enable Developer Mode
+          </a>
         </p>
       </section>
     );

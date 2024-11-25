@@ -1,7 +1,7 @@
 {
   "name": "Custom Script Injector",
   "description": "Extension to inject scripts into whatever web page",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "manifest_version": 3,
   "icons": {
     "16": "icon.png",

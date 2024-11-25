@@ -5,10 +5,12 @@ import { useObjectState } from "../utils/ReactUtils";
 import useScriptStorage from "./useScriptStorage";
 import PrismCodeEditor, { usePrismEditorRef } from "./PrismCodeEditor";
 import { toaster } from "./Toaster";
+import { URLMatcherModel } from "./URLMatcherModel";
 
 const AddScript = () => {
   const { state, setPartialState } = useObjectState({
     url: "",
+    matchType: "match-domain" as "match-domain" | "match-path" | "match-exact",
   });
   const { addScript } = useScriptStorage();
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -29,12 +31,18 @@ const AddScript = () => {
     const code = editorRef.current?.value;
     console.log("code", code);
 
-    if (!state.url || !code) {
+    if (!state.url || !code || !state.matchType) {
       toaster.danger("URL and code are required");
       return;
     }
 
-    await addScript(state.url, code);
+    const matchPatternUrl = URLMatcherModel.generateUrlPattern(state.url, {
+      matchDomain: state.matchType === "match-domain",
+      matchPath: state.matchType === "match-path",
+      matchExact: state.matchType === "match-exact",
+    });
+
+    await addScript(matchPatternUrl, code, state.url);
   };
 
   return (
@@ -56,7 +64,7 @@ const AddScript = () => {
           X
         </button>
         <form
-          className="w-[90%] mx-auto p-4 bg-white/95 rounded-md space-y-4"
+          className="w-[90%] mx-auto p-4 bg-white/95 rounded-md space-y-2"
           onSubmit={onSubmit}
         >
           <label htmlFor="url" className="">
@@ -74,10 +82,30 @@ const AddScript = () => {
               onChange={(e) => setPartialState({ url: e.target.value })}
             />
           </div>
+          <div>
+            <select
+              name="matchoptions"
+              id="matchoptions"
+              className="border border-gray-300 rounded-md w-full p-1"
+              value={state.matchType}
+              onChange={(e) =>
+                setPartialState({
+                  matchType: e.target.value as
+                    | "match-domain"
+                    | "match-path"
+                    | "match-exact",
+                })
+              }
+            >
+              <option value="match-domain">Match Domain</option>
+              <option value="match-path">Match Path</option>
+              <option value="match-exact">Match Exact</option>
+            </select>
+          </div>
           <label htmlFor="code" className="text-for block">
             Type Code here
           </label>
-          <div className="overflow-y-auto max-h-96">
+          <div className="overflow-y-auto max-h-72">
             {/* <textarea
               id="code"
               rows={10}

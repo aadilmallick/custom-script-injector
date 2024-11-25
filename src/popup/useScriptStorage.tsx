@@ -11,13 +11,13 @@ const useScriptStorage = () => {
   );
 
   const addScript = React.useCallback(
-    async (url: string, code: string) => {
+    async (urlMatch: string, code: string, originalUrl: string) => {
       const currentScript = new UserScripts(crypto.randomUUID());
-      const domainUrl = new URL(url).origin;
-      const urlMatch = `${domainUrl}/*`;
+      const domainUrl = new URL(originalUrl).origin;
+      // const urlMatch = `${domainUrl}/*`;
 
       const permissions = new PermissionsModel({
-        origins: [urlMatch],
+        origins: [`${domainUrl}/*`],
       });
       const isGranted = await permissions.request();
       if (!isGranted) {

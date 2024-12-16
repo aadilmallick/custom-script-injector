@@ -5,6 +5,8 @@ import useScriptStorage from "./useScriptStorage";
 import { usePrismEditorRef } from "./PrismCodeEditor";
 import { toaster } from "./Toaster";
 import { URLMatcherModel } from "./URLMatcherModel";
+import Tabs, { TabModel } from "../chrome-api/tabs";
+import { stateGlobal } from "./state";
 
 const LazyLoadedPrismCodeEditor = React.lazy(() => import("./PrismCodeEditor"));
 
@@ -21,8 +23,14 @@ const AddScript = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleOpen = () => {
+  const handleOpen = async () => {
     setOpen(true);
+    if (!state.url) {
+      console.log(stateGlobal);
+      if (stateGlobal.tab.url && !stateGlobal.tab.url.startsWith("chrome://")) {
+        setPartialState({ url: stateGlobal.tab.url });
+      }
+    }
   };
 
   const onSubmit = async (e: FormEvent) => {
@@ -32,8 +40,8 @@ const AddScript = () => {
     const code = editorRef.current?.value;
     console.log("code", code);
 
-    if (!state.url || !code || !state.matchType) {
-      toaster.danger("URL and code are required");
+    if (!state.url || !state.matchType) {
+      toaster.danger("URL is required");
       return;
     }
 
@@ -44,6 +52,7 @@ const AddScript = () => {
     });
 
     await addScript(matchPatternUrl, code, state.url);
+    console.log("popup: added script");
   };
 
   return (
@@ -107,16 +116,6 @@ const AddScript = () => {
             Type Code here
           </label>
           <div className="overflow-y-auto max-h-72">
-            {/* <textarea
-              id="code"
-              rows={10}
-              cols={30}
-              className="border border-gray-300 rounded-md w-full p-1 resize-none h-56 overflow-y-auto"
-              required
-              minLength={1}
-              maxLength={10000}
-              ref={textareaRef}
-            /> */}
             <LazyLoadedPrismCodeEditor ref={editorRef} language="jsx" />
           </div>
           <button

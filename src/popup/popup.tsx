@@ -5,9 +5,17 @@ import "./popup.css";
 import AddScript from "./AddScript";
 import ScriptList from "./ScriptList";
 import { UserScripts } from "../chrome-api/userScripts";
+import Tabs from "../chrome-api/tabs";
+import { stateGlobal } from "./state";
 
 import("./Toaster").then((module) => {
   module.toaster.setup();
+});
+
+import("../chrome-api/tabs").then(async (module) => {
+  const currentTab = await module.default.getCurrentTab();
+  console.log("currentTab", currentTab);
+  stateGlobal.tab = currentTab;
 });
 
 const App: React.FC<{}> = () => {

@@ -8,8 +8,11 @@ const LazyLoadedPrismCodeEditor = React.lazy(() => import("./PrismCodeEditor"));
 
 const ScriptList = () => {
   const { scripts, storageLoading } = useScriptStorage();
-  if (storageLoading || !scripts) {
+  if (!scripts) {
     return null;
+  }
+  if (storageLoading) {
+    return <h1>Loading...</h1>;
   }
   return (
     <ul className="border-t-2 pb-4 h-full overflow-y-auto px-1">

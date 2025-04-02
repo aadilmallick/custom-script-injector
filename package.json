@@ -4,7 +4,8 @@
   "description": "react chrome extension template",
   "scripts": {
     "start": "webpack --watch --progress --config webpack.dev.js",
-    "build": "webpack --progress --config webpack.prod.js"
+    "build": "webpack --progress --config webpack.prod.js",
+    "test": "vitest"
   },
   "author": "",
   "devDependencies": {
@@ -30,6 +31,7 @@
     "ts-loader": "^8.1.0",
     "typescript": "^5.6.3",
     "valibot": "^0.42.1",
+    "vitest": "^3.1.1",
     "webpack": "^5.34.0",
     "webpack-cli": "^4.6.0",
     "webpack-merge": "^5.7.3"

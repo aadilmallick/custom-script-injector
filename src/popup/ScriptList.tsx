@@ -3,6 +3,9 @@ import useScriptStorage from "./useScriptStorage";
 import { Script } from "../background/controllers/storage";
 import Backdrop from "@mui/material/Backdrop";
 import { usePrismEditorRef } from "./PrismCodeEditor";
+import Scripting from "../chrome-api/scripting";
+import Tabs from "../chrome-api/tabs";
+import { URLMatcherModel } from "./URLMatcherModel";
 
 const LazyLoadedPrismCodeEditor = React.lazy(() => import("./PrismCodeEditor"));
 
@@ -23,6 +26,53 @@ const ScriptList = () => {
   );
 };
 
+// export async function injectCamera(tabId: number) {
+//   Scripting.executeScripts(
+//     tabId,
+//     WebAccessibleResources.getFileURIForProcess("camera.js"),
+//     "ISOLATED"
+//   );
+// }
+
+async function insertScriptInDOM(script: Script) {
+  const tabToScript = (await chrome.tabs.query({})).filter((tab) => {
+    console.log(tab.url, script.url);
+    return URLMatcherModel.matches(tab.url, script.url);
+  })[0];
+  if (!tabToScript) {
+    console.error("no matching tab");
+    return;
+  }
+  console.log(tabToScript);
+  try {
+    await Scripting.executeFunction(
+      tabToScript.id,
+      async ({ code, scriptId }) => {
+        // Remove existing script if it exists
+        const existingScript = document.querySelector(
+          `script[data-script-id="${scriptId}"]`
+        );
+        if (existingScript) {
+          existingScript.remove();
+        }
+
+        // Create and append new script
+        const scriptElement = document.createElement("script");
+        scriptElement.setAttribute("data-script-id", scriptId);
+        scriptElement.textContent = code;
+        document.body.appendChild(scriptElement);
+      },
+      {
+        scriptId: script.id,
+        code: script.code,
+      },
+      "MAIN"
+    );
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 const ScriptRow = ({ script }: { script: Script }) => {
   const { removeScript, updateScript } = useScriptStorage();
   const [open, setOpen] = React.useState(false);
@@ -42,6 +92,7 @@ const ScriptRow = ({ script }: { script: Script }) => {
       return;
     }
     await updateScript(script.id, code);
+    await insertScriptInDOM(script);
     handleClose();
   };
   return (

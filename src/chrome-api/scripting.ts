@@ -35,12 +35,14 @@ export default class Scripting {
   static async executeFunction<T, V extends Record<string, any>>(
     tabId: number,
     cb: (args: V) => Promise<T>,
-    args: V
+    args: V,
+    world: "ISOLATED" | "MAIN" = "ISOLATED"
   ) {
     const result = await chrome.scripting.executeScript({
       target: { tabId },
       func: cb,
       args: [args],
+      world: world,
     });
     return result[0].result as T;
   }

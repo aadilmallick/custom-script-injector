@@ -26,7 +26,11 @@ export class UserScripts {
 
   constructor(public readonly id: string) {}
 
-  async registerScript(matchPatterns: string[], js: string) {
+  async registerScript(
+    matchPatterns: string[],
+    js: string,
+    world: "USER_SCRIPT" | "MAIN" = "USER_SCRIPT"
+  ) {
     if (await this.getScript()) {
       return;
     }
@@ -36,7 +40,7 @@ export class UserScripts {
         id: this.id,
         matches: matchPatterns,
         js: [{ code: js }],
-        world: "USER_SCRIPT",
+        world: world,
       },
     ]);
   }
@@ -61,11 +65,15 @@ export class UserScripts {
     });
   }
 
-  async updateScript(js: string) {
+  async updateScript(
+    js: string,
+    world: "USER_SCRIPT" | "MAIN" = "USER_SCRIPT"
+  ) {
     await chrome.userScripts.update([
       {
         id: this.id,
         js: [{ code: js }],
+        world,
       },
     ]);
   }

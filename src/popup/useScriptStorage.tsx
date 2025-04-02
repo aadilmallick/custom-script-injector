@@ -27,7 +27,7 @@ const useScriptStorage = () => {
       return;
     }
 
-    await currentScript.registerScript([urlMatch], code);
+    await currentScript.registerScript([urlMatch], code, "MAIN");
     console.log(await currentScript.getScript());
     const script: Script = {
       code,
@@ -45,7 +45,7 @@ const useScriptStorage = () => {
 
   const updateScript = async (id: string, code: string) => {
     const currentScript = new UserScripts(id);
-    await currentScript.updateScript(code);
+    await currentScript.updateScript(code, "MAIN");
     setValueAndStore(
       data.map((script) => {
         if (script.id === id) {

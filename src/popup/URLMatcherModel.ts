@@ -44,4 +44,30 @@ export class URLMatcherModel {
       return null;
     }
   }
+
+  /**
+   * Check if a URL matches a given pattern.
+   * @param {string} url - The URL to check.
+   * @param {string} pattern - The pattern to match against.
+   * @returns {boolean} - True if the URL matches the pattern, false otherwise.
+   */
+  static matches(url: string, pattern: string): boolean {
+    try {
+      // Handle exact match
+      if (!pattern.includes("*")) {
+        return url === pattern;
+      }
+
+      // Convert pattern to regex
+      const regexPattern = pattern
+        .replace(/[\.\*\+\?\^\$\{\}\(\)\|\[\]\\]/g, "\\$&") // Escape special regex characters
+        .replace(/\*/g, ".*"); // Convert * to regex wildcard
+
+      const regex = new RegExp(`${regexPattern}`);
+      return regex.test(url);
+    } catch (error) {
+      console.error("Error checking URL match:", error);
+      return false;
+    }
+  }
 }
